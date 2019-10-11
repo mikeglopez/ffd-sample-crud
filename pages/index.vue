@@ -17,13 +17,7 @@
           <p>
             Register to satisfy your taco craving
           </p>
-          <form @submit.prevent="register">
-            Username: <input v-model="user" type="text">
-            <br>
-            Password: <input v-model="password" type="password">
-            <br><br>
-            <input type="submit" value="Register">
-          </form>
+          <Entry :entry-type="'register'" />
           <br>
           <p>
             Or <nuxt-link to="/Signin">
@@ -37,30 +31,12 @@
 </template>
 
 <script>
-import axios from 'axios'
+import Entry from '../components/Entry'
 export default {
-  data () {
-    return {
-      user: '',
-      password: ''
-    }
+  components: {
+    Entry
   },
   methods: {
-    register () {
-      try {
-        axios.post('/register', {
-          user: this.user,
-          password: this.password
-        })
-          .then((response) => {
-            console.log(response.data)
-            this.user = ''
-            this.password = ''
-          })
-      } catch (err) {
-        console.log(err)
-      }
-    },
     head () {
       return {
         title: 'Tacomatic Registration',

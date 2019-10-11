@@ -13,45 +13,19 @@
         <v-card-title class="headline">
           Sign In
         </v-card-title>
-        <v-card-text>
-          <form @submit.prevent="signin">
-            Username: <input v-model="user" type="text">
-            <br>
-            Password: <input v-model="password" type="password">
-            <br><br>
-            <input type="submit" value="Sign In">
-          </form>
-        </v-card-text>
+        <Entry :entry-type="'signin'" />
       </v-card>
     </v-flex>
   </v-layout>
 </template>
 
 <script>
-import axios from 'axios'
+import Entry from '../components/Entry'
 export default {
-  data () {
-    return {
-      user: '',
-      password: ''
-    }
+  components: {
+    Entry
   },
   methods: {
-    signin () {
-      try {
-        axios.post('/signin', {
-          user: this.user,
-          password: this.password
-        })
-          .then((response) => {
-            console.log(response.data)
-            this.user = ''
-            this.password = ''
-          })
-      } catch (err) {
-        console.log(err)
-      }
-    },
     head () {
       return {
         title: 'Tacomatic Sign In',
