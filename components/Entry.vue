@@ -1,6 +1,7 @@
 <template>
   <v-card-text>
     <form @submit.prevent="`${entry(entryType)}`">
+      <p v-if="error" class="red--text">{{ error.message }}</p>
       Username: <input v-model="user" type="text">
       <br>
       Password: <input v-model="password" type="password">
@@ -12,6 +13,7 @@
 
 <script>
 import axios from 'axios'
+import { auth } from '~/plugins/firebase'
 export default {
   name: 'Entry',
   props: {
@@ -23,18 +25,46 @@ export default {
   data () {
     return {
       user: '',
-      password: ''
+      password: '',
+      error: null
     }
   },
   methods: {
-    entry (entryType) { // takes 'register' or 'signin'
+    async entry (entryType) { // takes 'register' or 'signin'
       try {
         axios.post(`/${entryType}`, {
           user: this.user,
           password: this.password
         })
-          .then((response) => {
+          .then(async(response) => {
             console.log(response.data)
+            if (entryType === 'register') {
+              await auth.createUserWithEmailAndPassword(this.user, this.password)
+              .then((res) => {
+                  console.log(res)
+                })
+              .catch((error) => {
+                // Handle Errors here.
+                // console.log(error);
+                this.error = error
+                var errorCode = error.code;
+                var errorMessage = error.message;
+                // ...
+              })
+
+            } else {
+              await auth.signInWithEmailAndPassword(this.user, this.password)
+              .then((res) => {
+                  console.log(res)
+                })
+              .catch((error) => {
+                this.error = error
+                // Handle Errors here.
+                var errorCode = error.code;
+                var errorMessage = error.message;
+                // ...
+              })
+            }
             this.user = ''
             this.password = ''
           })
